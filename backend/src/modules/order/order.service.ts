@@ -29,5 +29,24 @@ export class OrderService {
     return order;
   }
 
-  list(userId?: number) { return userId ? this.orders.filter((item) => item.userId === userId) : this.orders; }
+  list(userId?: number) {
+    return userId ? this.orders.filter((item) => item.userId === userId) : this.orders;
+  }
+
+  findCompletedOrderByProduct(userId: number, productId: number) {
+    return (
+      this.orders.find((order) => {
+        if (order.userId !== userId) return false;
+        if (order.status !== OrderStatus.Completed) return false;
+        return order.items.some((item) => item.productId === productId);
+      }) || null
+    );
+  }
+
+  markAsReviewed(orderId: number) {
+    const order = this.orders.find((o) => o.id === orderId);
+    if (!order) return null;
+    order.status = OrderStatus.Reviewed;
+    return order;
+  }
 }
